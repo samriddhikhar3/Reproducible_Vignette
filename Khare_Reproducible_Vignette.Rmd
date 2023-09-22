@@ -8,7 +8,7 @@ output:
     toc: true
     toc_float: true
     code_download: true
-    code_folding: show
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +20,13 @@ output:
     out.width = '100%',
     fig.retina =3
   )
+
+```
+
+```{r organize directories, include=FALSE}
+
+dir.create("output")
+dir.create("images")
 
 ```
 
@@ -37,7 +44,6 @@ library(tidyverse)
 library(tidyr)
 library(ggplot2)
 library(viridis)
-library(hexbin)
 
 ```
 
@@ -56,9 +62,54 @@ filled.contour(cos(r^2)*exp(-r/(2*pi)),
 ```
 
 ```{r}
+# Generate random data
+set.seed(123)
+data <- data.frame(
+  x = rnorm(300),  # Increased data points to make it denser
+  y = rnorm(300),  # Increased data points to make it denser
+  z = rnorm(300)   # Increased data points to make it denser
+)
 
-ggplot(data.frame(x = rnorm(10000), y = rnorm(10000)), aes(x = x, y = y)) +
-  geom_hex() + coord_fixed() +
-  scale_fill_viridis() + theme_bw()
+# Create a scatterplot with color based on the 'z' variable
+ggplot(data, aes(x = x, y = y, fill = z)) +
+  geom_point(shape = 21, size = 4, color = "transparent") +  # Remove outline with 'color'
+  scale_fill_viridis() +  # Use Viridis color palette
+  theme_minimal() 
+```
+1. scale_fill_viridis() and scale_color_viridis():
+
+These functions are used to apply the Viridis color palette to the fill and color aesthetics, respectively, in ggplot2.
+option argument:
+
+2. The option argument within scale_fill_viridis() or scale_color_viridis() allows you to choose different variations of the Viridis color palette. The available options are:
+"m" (default): Magma
+"i": Inferno
+"p": Plasma
+"v": Viridis
+"D": Diverging (a diverging version of Viridis with two distinct colors)
+Other Viridis options:
+
+3. Beyond the basic options, Viridis provides additional options for different variations of the color palette, including the "_c" suffix for continuous scales and "_d" for discrete scales. For example:
+scale_fill_viridis_c(): To apply a continuous Viridis color scale.
+scale_fill_viridis_d(): To apply a discrete Viridis color scale.
+
+```{r}
+# Generate random data with discrete categories
+set.seed(123)
+categories <- sample(letters[1:5], 50, replace = TRUE)
+values <- rnorm(50)
+
+data <- data.frame(Category = categories, Value = values)
+
+# Create a bar plot with a discrete Viridis color palette
+ggplot(data, aes(x = Category, y = Value, fill = Category)) +
+  geom_bar(stat = "identity") +
+  scale_fill_viridis_d(option = "v") +  # Using the discrete Viridis palette
+  labs(title = "Bar Plot with Discrete Viridis Color Palette", x = "Category", y = "Value") +
+  theme_minimal()
 ```
 
+
+```{r session info}
+sessionInfo()
+```
